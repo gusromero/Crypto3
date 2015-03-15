@@ -89,8 +89,8 @@ namespace Crypto3
              shaM = new SHA256Managed();
 
              // Recursive way
-             byte[] result = CalculeHashRecursive(bytes);
-             Console.WriteLine("Last Hash: " + ByteArrayToHexString(result));
+             //byte[] result = CalculeHashRecursive(bytes);
+             //Console.WriteLine("Last Hash: " + ByteArrayToHexString(result));
 
             //Secuential way
             int numFullBlocks = bytes.Length/BLOCK_SIZE;
