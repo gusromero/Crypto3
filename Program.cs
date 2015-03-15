@@ -7,8 +7,8 @@ namespace Crypto3
 {
     class Program
     {
-        public static int BLOCK_SIZE = 1024;
-        public static int HASH_SIZE = 32;
+        public static readonly int BLOCK_SIZE = 1024;
+        public static readonly int HASH_SIZE = 32;
 
         public static string Filename = "Target.mp4";
 
@@ -70,46 +70,46 @@ namespace Crypto3
             {
                 return CalculeHash(bytes);
             }
-            else
-            {
-                byte[] block = SubArray(bytes, 0, BLOCK_SIZE);
-                byte[] rest = SubArray(bytes, BLOCK_SIZE, bytes.Length);
+          
+            byte[] block = SubArray(bytes, 0, BLOCK_SIZE);
+            byte[] rest = SubArray(bytes, BLOCK_SIZE, bytes.Length);
 
-                byte[] result = CalculeHash(ConcatArrays(block, CalculeHashRecursive(rest)));
-                return result;
-            }
+            byte[] result = CalculeHash(ConcatArrays(block, CalculeHashRecursive(rest)));
+            return result;
         }
 
 
         static void Main(string[] args)
         {
-            byte[] bytes = System.IO.File.ReadAllBytes(Filename);
+            var bytes = System.IO.File.ReadAllBytes(Filename);
 
             Console.WriteLine("File: " + Filename);
             Console.WriteLine("Size: " + bytes.Length + " Bytes");
             
              shaM = new SHA256Managed();
 
-             //byte[] result = CalculeHashRecursive(bytes);
-             //Console.WriteLine("Last Hash: " + ByteArrayToHexString(result));
+             // Recursive way
+             byte[] result = CalculeHashRecursive(bytes);
+             Console.WriteLine("Last Hash: " + ByteArrayToHexString(result));
 
+            //Secuential way
             int numFullBlocks = bytes.Length/BLOCK_SIZE;
             Console.WriteLine("Num Blocks: " + numFullBlocks + " Full Blocks of " + BLOCK_SIZE + " bytes");
              
-            byte[] previousHash = new byte[] {};
+            byte[] previousHash = {};
             
             if (bytes.Length%BLOCK_SIZE != 0)
             {
-                byte[] LastBlock = SubArray(bytes, numFullBlocks * BLOCK_SIZE, bytes.Length);
-                Console.WriteLine(" + 1 block of: " + LastBlock.Length + " Bytes");
+                byte[] lastBlock = SubArray(bytes, numFullBlocks * BLOCK_SIZE, bytes.Length);
+                Console.WriteLine(" + 1 block of: " + lastBlock.Length + " Bytes");
                 
-                previousHash = CalculeHash(LastBlock);
+                previousHash = CalculeHash(lastBlock);
             }
 
 
-            for (int i = numFullBlocks; i > 0; i--)
+            for (var i = numFullBlocks; i > 0; i--)
             {
-                byte[] currentBlock = SubArray(bytes, (i-1)*BLOCK_SIZE, i*BLOCK_SIZE);
+                var currentBlock = SubArray(bytes, (i-1)*BLOCK_SIZE, i*BLOCK_SIZE);
                 previousHash = CalculeHash(ConcatArrays(currentBlock, previousHash));
             }
 
